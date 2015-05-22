@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>getUserMedia</title>
+</head>
+
+<body>
+  <button id="vga">640x480</button>
+  <button id="qvga">320x240</button>
+  <button id="hd">1280x960</button>
+  <video autoplay></video>
+  <script>
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
+      || navigator.mozGetUserMedia;
+    var constraints = { audio: false, video: true };
+
+    var video = document.querySelector('video');
+    var stream;
+    function successCallback(stream){
+      window.stream = stream;
+      if(window.URL){
+        video.src = window.URL.createObjectURL(stream);
+      } else{
+        video.src = stream;
+      }
+    }
+    function errorCallback(error){
+      console.log(error);
+    }
+    
+    function getMedia(constraints){
+      if(!!stream){
+        video.src = null;
+        stream.stop();
+      }
+      navigator.getUserMedia(constraints, successCallback, errorCallback);
+    }
+
+    document.querySelector('#qvga').onclick = function(){
+      getMedia({ video: { mandatory: { maxWidth: 320, maxHeight: 240 } } });
+    };
+    document.querySelector('#vga').onclick = function(){
+      getMedia({ video: { mandatory: { maxWidth: 640, maxHeight: 480 } } });
+    };
+    document.querySelector('#hd').onclick = function(){
+      getMedia({ video: { mandatory: { maxWidth: 1280, maxHeight: 960 } } });
+    };
+  </script>
+</body>
+
+</html>
